@@ -2,103 +2,11 @@ function ping(): string {
     return "mb2_serial:77"
 }
 
-
-// lm35 temperature
-function read_lm35_temp(tempPin: number) : number {
-    return (300 * pins.analogReadPin(tempPin)) / 1023
-}
-
 // DS temp
 function read_ds_temp(tempPin: number): number {
-    return dstemp.celsius(tempPin)
+    return Environment.Ds18b20Temp(tempPin, Environment.ValType.DS18B20_temperature_C)
 }
 
-let irButton = ""
-
-// IR Receiver
-function read_ir_receiver(receiverPin: number): number {
-    makerbit.connectIrReceiver(receiverPin, IrProtocol.Keyestudio)
-    irButton = convertToText(makerbit.irDatagram())
-    if (irButton == "0x807F00FF") { return 15 }
-    if (irButton == "0x807F807F") { return 1 }
-    if (irButton == "0x807F906F") { return 2 }
-    if (irButton == "0x807FA05F") { return 3 }
-    if (irButton == "0x807F40BF") { return 4 }
-    if (irButton == "0x807F20DF") { return 5 }
-    if (irButton == "0x807F50AF") { return 6 }
-    if (irButton == "0x807F02FD") { return 7 }
-    if (irButton == "0x807F12ED") { return 8 }
-    if (irButton == "0x807F609F") { return 9 }
-    if (irButton == "0x807FC03F") { return 10 }
-    if (irButton == "0x807FD02F") { return 11 }
-    if (irButton == "0x807F22DD") { return 12 }
-    if (irButton == "0x00000000") { return 0 }
-    return -1
-}
-
-// Hall Magnetic
-function read_hall_magnetic(inputPin: number): number {
-    return pins.digitalReadPin(inputPin)
-}
-
-function read_knock_sensor(sensorPin: number): number {
-    return pins.digitalReadPin(sensorPin)
-}
-
-// Digital Tilt Sensor
-function read_digital_tilt_sensor(switcher: number): number {
-    return pins.digitalReadPin(switcher)
-}
-
-// Capacitive Touch Sensor
-function read_capacitive_touch_sensor(KEY: number): number {
-    return pins.digitalReadPin(KEY)
-}
-
-// Flame Alarm
-function read_flame_sensor(flamePin: number): number {
-    return pins.digitalReadPin(flamePin)
-}
-
-// Reed Switch
-function read_reed_switch(buttonpin: number): number {
-    return pins.digitalReadPin(buttonpin)
-}
-
-// PIR Motion Sensing
-function read_pir_motion_sensor(sensorPin: number): number {
-    return pins.digitalReadPin(sensorPin)
-}
-
-// Analog Temperature
-function read_analog_temperature(analogPin: number): number {
-    let val = pins.analogReadPin(analogPin)
-    let fenya = (val / 1023) * 3.3 // micro:bit uses 3.3V for analog inputs
-    let r = (3.3 - fenya) / fenya * 4700
-    let temperature = 1 / (Math.log(r / 10000) / 3950 + 1 / (25 + 273.15)) - 273.15
-    return temperature
-}
-
-// Control White LED
-function control_white_led(ledPin: number, state: number): number {
-    pins.digitalWritePin(ledPin, state)
-    return 1
-}
-
-// Analog Rotation Sensor
-function read_analog_rotation_sensor(sensorPin: number): number {
-    return pins.analogReadPin(sensorPin)
-}
-
-// Photocell
-function read_photocell(sensorPin: number): number {
-    return pins.analogReadPin(sensorPin)
-}
-
-// Analog Sound Sensor
-function read_analog_sound_sensor(sensorPin: number): number {
-    return pins.analogReadPin(sensorPin)
-}
 
 // Water Level Sensor
 function read_water_level_sensor(analogPin: number): number {
@@ -110,57 +18,6 @@ function read_soil_moisture_sensor(sensorPin: number): number {
     return pins.analogReadPin(sensorPin)
 }
 
-// Steam Moisture Sensor
-function read_steam_moisture_sensor(sensorPin: number): number {
-    return pins.analogReadPin(sensorPin)
-}
-
-// Analog Ceramic Vibration Sensor
-function read_analog_ceramic_vibration_sensor(sensorPin: number): number {
-    return pins.analogReadPin(sensorPin)
-}
-
-// Voltage Detection
-function read_voltage_detection(sensorPin: number): number {
-    return pins.analogReadPin(sensorPin)
-}
-
-let oldValue = 0
-// Pulse Rate Monitor
-function read_pulse_rate_monitor(sensorPin: number): number {
-    let rawValue = pins.analogReadPin(sensorPin)
-    let value = 0.75 * oldValue + (1 - 0.75) * rawValue
-    oldValue = value
-    return value
-}
-
-// Joystick
-function read_joystick(xPin: number, yPin: number, zPin: number): string {
-    let x = pins.analogReadPin(xPin)
-    let y = pins.analogReadPin(yPin)
-    let z = pins.digitalReadPin(zPin)
-    return `${x},${y},${z}`
-}
-
-function read_rotary_encoder(CLK: number, DT: number, buttonPin: number): string {
-    let right = pins.digitalReadPin(CLK)
-    let left = pins.digitalReadPin(DT)
-    let pressed = pins.digitalReadPin(buttonPin)
-
-    return `${right},${left},${pressed}`
-}
-
-// Control Single Relay
-function control_single_relay(RelayPin: number, state: number): number {
-    pins.digitalWritePin(RelayPin, state)
-    return 1
-}
-
-// Read Linear Temperature
-function read_linear_temperature(sensorPin: number): number {
-    let val = pins.analogReadPin(sensorPin)
-    return (500 * val) / 1024
-}
 
 function read_dht11_sensor(sensorPin: number, mode: string): string {
     if (mode == "T") {
@@ -174,58 +31,6 @@ function read_dht11_sensor(sensorPin: number, mode: string): string {
     }
 }
 
-// Ultrasonic Ranger
-function read_ultrasonic_ranger(ECHO: number, TRIG: number): number {
-    pins.digitalWritePin(TRIG, 0)
-    control.waitMicros(2)
-    pins.digitalWritePin(TRIG, 1)
-    control.waitMicros(10)
-    pins.digitalWritePin(TRIG, 0)
-    let duration = pins.pulseIn(ECHO, PulseValue.High)
-    return duration / 58
-}
-
-// Control 4-Digit LED Display
-function control_4_digit_led_display(CLK: number, DIO: number, value: number): number {
-    let tm = TM1637.create(CLK, DIO, 7, 4)
-    tm.showNumber(value)
-    return 1;
-}
-
-// Control Traffic Light
-function control_traffic_light(redPin: number, yellowPin: number, greenPin: number, redState: number, yellowState: number, greenState: number): number {
-    pins.digitalWritePin(greenPin, greenState > 0 ? 1: 0)
-    pins.digitalWritePin(yellowPin, yellowState > 0 ? 1: 0)
-    pins.digitalWritePin(redPin, redState > 0 ? 1: 0)
-    return 1
-}
-
-// Control Buzzer
-function control_buzzer(buzzPin: number, state: number): number {
-    pins.digitalWritePin(buzzPin, state)
-    return 1
-}
-
-// Control Motor
-function control_motor(ZD: number, speed: number): number {
-    pins.servoWritePin(ZD, speed)
-    return 1
-}
-
-// Read Push Button
-function read_push_button(inputPin: number): number {
-    return pins.digitalReadPin(inputPin)
-}
-
-// Read Collision Flash
-function read_collision_flash(Shock: number): number {
-    return pins.digitalReadPin(Shock)
-}
-
-// Read Line Tracking
-function read_line_tracking(sensorPin: number): number {
-    return pins.digitalReadPin(sensorPin)
-}
 
 // =============================================================================
 // ELECFREAKS KIT
@@ -264,9 +69,6 @@ function read_accelerometer() {
     return "" + input.acceleration(Dimension.X) + "," + input.acceleration(Dimension.Y) + "," + input.acceleration(Dimension.Z)
 }
 
-function read_compass() {
-    return input.compassHeading()
-}
 
 function play_music(music_id: number) {
     if (music_id == 0) {
@@ -287,6 +89,11 @@ function play_sound(sound_id: number) {
         return 1
     }
 }
+
+// function read_compass() {
+//     return input.compassHeading()
+// }
+
 //////////////////// Gesture ////////////////
 function enable_gesture(state: number) {
     enable.gesture = state === 1;
@@ -712,7 +519,7 @@ const functions: { [key: string]: Function } = {
     'i1': enable_button_ab,
     'i2': enable_gesture,
     'i3': read_accelerometer,
-    'i4': read_compass,
+    // 'i4': read_compass,
     'i5': read_temperature,
 
     'o0': play_sound,
@@ -721,44 +528,10 @@ const functions: { [key: string]: Function } = {
     'o2a': enable_led_matrix,
     'o2t': write_led_matrix_text,
 
-    'z1': read_infrared_obstacle_avoidance,
-    'z2': read_photo_interrupter,
-    'z3': read_hall_magnetic,
-    'z4': read_knock_sensor,
-    'z5': read_digital_tilt_sensor,
-    'z6': read_capacitive_touch_sensor,
-    'z7': read_flame_sensor,
-    'z8': read_reed_switch,
-    'z9': read_pir_motion_sensor,
-    'za': read_analog_temperature,
-    'zb': control_white_led,
-    'zc': read_analog_rotation_sensor,
-    'zd': read_photocell,
-    'ze': read_analog_sound_sensor,
     'zf': read_water_level_sensor,
     'zg': read_soil_moisture_sensor,
-    'zh': read_steam_moisture_sensor,
-    'zi': read_analog_ceramic_vibration_sensor,
-    'zj': read_voltage_detection,
-    'zk': read_ir_receiver,
-    'zl': control_rgb_led,
-    'zm': read_pulse_rate_monitor,
-    'zn': read_joystick,
-    'zo': read_rotary_encoder,
-    'zp': control_single_relay,
-    'zq': read_linear_temperature,
     'zr': read_dht11_sensor,
-    'zs': read_ultrasonic_ranger,
-    'zt': control_4_digit_led_display,
-    'zu': control_traffic_light,
-    'zv': control_buzzer,
-    'zw': control_motor,
-    'zx': read_push_button,
-    'zy': read_collision_flash,
-    'zz': read_line_tracking,
     'aa': read_ds_temp,
-    'bb': read_lm35_temp,
-    'cc': read_ir_temp,
     
 }
 
