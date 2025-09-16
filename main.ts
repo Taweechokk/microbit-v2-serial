@@ -228,28 +228,8 @@ function add_text(text: string | number) {
     return 1
 }
 
-function read_water_level(water_level_pin: number) {
-    return Environment.ReadWaterLevel(water_level_pin)
-}
-
 function read_light_intensity(light_intensity_pin: number) {
-    return Environment.ReadLightIntensity(light_intensity_pin)
-}
-
-function read_BME280(state: number) {
-    if (state == 0) {
-        return Environment.octopus_BME280(Environment.BME280_state.BME280_temperature_C)
-    }
-    if (state == 1) {
-        return Environment.octopus_BME280(Environment.BME280_state.BME280_humidity)
-    }
-    if (state == 2) {
-        return Environment.octopus_BME280(Environment.BME280_state.BME280_pressure)
-    }
-    if (state == 3) {
-        return Environment.octopus_BME280(Environment.BME280_state.BME280_altitude)
-    }
-    return 0
+    return smarthome.ReadLightIntensity(light_intensity_pin)
 }
 
 function move_servo(pin: number, angle: number) {
@@ -257,59 +237,39 @@ function move_servo(pin: number, angle: number) {
     return 1
 }
 
-function read_sonarbit_distance(pin: number, distance_unit: number) {
-    return Environment.sonarbit_distance(distance_unit, pin) / 2
-}
-
 function read_soil_humidity(soil_moisture_pin: number) {
-    return Environment.ReadSoilHumidity(soil_moisture_pin)
+    return smarthome.ReadSoilHumidity(soil_moisture_pin)
 }
 
 function read_noise(noise_pin: number) {
-    return Environment.ReadNoise(noise_pin)
-}
-
-function read_dust(v_led: number, vo: number) {
-    return Environment.ReadDust(v_led, vo)
+    return smarthome.ReadNoise(noise_pin)
 }
 
 function read_pir(pin: number) {
-    if (Environment.PIR(pin)) {
+    if (smarthome.PIR(pin)) {
         return 1
     } else {
         return 0
     }
 }
 
-//////////////////// Smart Climate Kit ////////////////
-// windSpeed
-function wind_speed(sensorPin: number): number {
-    let win_speed = Environment.ReadWindSpeed(sensorPin)
-    return win_speed
-}
-
 // uv sensor
 function uv_sensor(sensorPin: number): number {
-    let uv = Environment.UVLevel(sensorPin)
+    let uv = smarthome.UVLevel(sensorPin)
     return uv
 }
-//////////////////// END_smart climate kit ////////////////
 
 //////////////////// Smart Agriculture Kit ////////////////
-// DS18b20 temp
-function read_ds_temp(tempPin: number): number {
-    return Environment.Ds18b20Temp(tempPin, Environment.ValType.DS18B20_temperature_C)
-}
-
 
 function read_dht11_sensor(sensorPin: number, mode: string): string {
     if (mode == "T") {
-        return `${Environment.dht11value(Environment.DHT11Type.DHT11_temperature_C, sensorPin)}`
+        // return `${Environment.dht11value(Environment.DHT11Type.DHT11_temperature_C, sensorPin)}`
+        return `${smarthome.dht11Sensor(sensorPin, smarthome.DHT11_state.DHT11_temperature_C)}`
     } else if (mode == "H") {
-        return `${Environment.dht11value(Environment.DHT11Type.DHT11_humidity, sensorPin)}`
+        return `${smarthome.dht11Sensor(sensorPin, smarthome.DHT11_state.DHT11_humidity)}`
     } else {
-        const T = Environment.dht11value(Environment.DHT11Type.DHT11_temperature_C, sensorPin)
-        const H = Environment.dht11value(Environment.DHT11Type.DHT11_humidity, sensorPin)
+        const T = smarthome.dht11Sensor(sensorPin, smarthome.DHT11_state.DHT11_temperature_C)
+        const H = smarthome.dht11Sensor(sensorPin, smarthome.DHT11_state.DHT11_humidity)
         return `${H},${T}`
     }
 }
@@ -487,14 +447,10 @@ const functions: { [key: string]: Function } = {
     'ping': ping,
 
     'a': add_text,
-    'd': read_BME280,
-    'e': read_dust,
     'f': read_light_intensity,
     'g': read_noise,
     'h': read_pir,
     'i': read_soil_humidity,
-    'j': read_water_level,
-    'k': read_sonarbit_distance,
     'l': move_servo,
     'm': read_digital,
     'n': read_analog,
@@ -503,7 +459,6 @@ const functions: { [key: string]: Function } = {
     'q': set_analog_period,
     'r': play_sound,
     's': play_music,
-    'dd': wind_speed,
     'ee': rainbow,
     'ff': uv_sensor,
 
@@ -521,7 +476,6 @@ const functions: { [key: string]: Function } = {
     'o2t': write_led_matrix_text,
 
     'zr': read_dht11_sensor,
-    'aa': read_ds_temp,
 }
 
 ///////////// SETUP ////////////
