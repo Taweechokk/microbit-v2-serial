@@ -2,36 +2,6 @@ function ping(): string {
     return "mb2_serial:77"
 }
 
-// DS temp
-function read_ds_temp(tempPin: number): number {
-    return Environment.Ds18b20Temp(tempPin, Environment.ValType.DS18B20_temperature_C)
-}
-
-
-// Water Level Sensor
-function read_water_level_sensor(analogPin: number): number {
-    return pins.analogReadPin(analogPin)
-}
-
-// Soil Moisture Sensor
-function read_soil_moisture_sensor(sensorPin: number): number {
-    return pins.analogReadPin(sensorPin)
-}
-
-
-function read_dht11_sensor(sensorPin: number, mode: string): string {
-    if (mode == "T") {
-        return `${Environment.dht11value(Environment.DHT11Type.DHT11_temperature_C, sensorPin)}`
-    } else if (mode == "H") {
-        return `${Environment.dht11value(Environment.DHT11Type.DHT11_humidity, sensorPin)}`
-    } else {
-        const T = Environment.dht11value(Environment.DHT11Type.DHT11_temperature_C, sensorPin)
-        const H = Environment.dht11value(Environment.DHT11Type.DHT11_humidity, sensorPin)
-        return `${H},${T}`
-    }
-}
-
-
 // =============================================================================
 // ELECFREAKS KIT
 // =============================================================================
@@ -238,6 +208,7 @@ function encode_led_matrix(hex: number) {
 }
 /////////////////////////////////////////////
 
+//////////////////// sensor kit ////////////////
 let oledInited = false   // <-- flag
 
 function add_text(text: string | number) {
@@ -254,7 +225,6 @@ function add_text(text: string | number) {
     for (let i = 0; i < lines.length; i++) {
         OLED.writeStringNewLine(lines[i])
     }
-    
     return 1
 }
 
@@ -311,7 +281,7 @@ function read_pir(pin: number) {
     }
 }
 
-
+//////////////////// Smart Climate Kit ////////////////
 // windSpeed
 function wind_speed(sensorPin: number): number {
     let win_speed = Environment.ReadWindSpeed(sensorPin)
@@ -323,7 +293,28 @@ function uv_sensor(sensorPin: number): number {
     let uv = Environment.UVLevel(sensorPin)
     return uv
 }
+//////////////////// END_smart climate kit ////////////////
 
+//////////////////// Smart Agriculture Kit ////////////////
+// DS18b20 temp
+function read_ds_temp(tempPin: number): number {
+    return Environment.Ds18b20Temp(tempPin, Environment.ValType.DS18B20_temperature_C)
+}
+
+
+function read_dht11_sensor(sensorPin: number, mode: string): string {
+    if (mode == "T") {
+        return `${Environment.dht11value(Environment.DHT11Type.DHT11_temperature_C, sensorPin)}`
+    } else if (mode == "H") {
+        return `${Environment.dht11value(Environment.DHT11Type.DHT11_humidity, sensorPin)}`
+    } else {
+        const T = Environment.dht11value(Environment.DHT11Type.DHT11_temperature_C, sensorPin)
+        const H = Environment.dht11value(Environment.DHT11Type.DHT11_humidity, sensorPin)
+        return `${H},${T}`
+    }
+}
+
+/////// rainbow function helper ////////
 function isDecimalStr(s: string): boolean {
     if (!s || s.length === 0) return false
     for (let i = 0; i < s.length; i++) {
@@ -419,7 +410,7 @@ function hexToRGBBr(input: number | string): { r: number, g: number, b: number, 
     return { r, g, b, br: brv }
 }
 
-
+// rainbow RGB LED
 function rainbow(rbgPin: number, color: number | string): number {
     const v = hexToRGBBr(color)
     const strip = neopixel.create(rbgPin, 1, NeoPixelMode.RGB)
@@ -428,10 +419,11 @@ function rainbow(rbgPin: number, color: number | string): number {
     const label = (typeof color === "number") ? decToHex8(color) : ("" + color)
     return 1
 }
-
+////// END_smart agriculture kit ////////
 
 //////////// END_ELECFREAKS //////////
 
+//////// variables setup ///////////
 const soundExpressionsMap: { [key: number]: SoundExpression } = {
     1: soundExpression.giggle,
     2: soundExpression.happy,
@@ -528,11 +520,8 @@ const functions: { [key: string]: Function } = {
     'o2a': enable_led_matrix,
     'o2t': write_led_matrix_text,
 
-    'zf': read_water_level_sensor,
-    'zg': read_soil_moisture_sensor,
     'zr': read_dht11_sensor,
     'aa': read_ds_temp,
-    
 }
 
 ///////////// SETUP ////////////
