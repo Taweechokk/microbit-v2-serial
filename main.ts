@@ -381,6 +381,51 @@ function rainbow(rbgPin: number, color: number | string): number {
 }
 ////// END_smart agriculture kit ////////
 
+function TMP36(pin: number, mode: string): number {
+    if (mode == "F") {
+        return smarthome.ReadTemperature(TMP36Type.TMP36_temperature_F, pin)
+    } else if (mode == "C") {
+        return smarthome.ReadTemperature(TMP36Type.TMP36_temperature_C, pin)
+    } else {
+        return -1
+    }
+}
+
+function Relay(pin: number, state: number): string {
+    if (state == 1) {
+        smarthome.Relay(pin, smarthome.RelayStateList.On)
+        return "NC Open|NO Close"
+    } else if (state == 0) {
+        smarthome.Relay(pin, smarthome.RelayStateList.Off)
+        return "NC Close|NO Open"
+    } else {
+        return -1
+    }
+}
+
+function motorwithfan(pin_Motor: number, state_Motor: number): number {
+    if (state_Motor == 1) {
+        smarthome.motorFan(pin_Motor, true)
+    } else if (state_Motor == 0) {
+        smarthome.motorFan(pin_Motor, false)
+    } else {
+        return -1
+    }
+}
+
+function MQ3_Alcohol(pin: number): number {
+    return smarthome.mq3(pin)
+}
+
+function CrashSensor(pin: number): number {
+    smarthome.crashSensorSetup(pin)
+    if (smarthome.crashSensor()) {
+        return 1
+    } else {
+        return 0
+    }
+}
+
 //////////// END_ELECFREAKS //////////
 
 //////// variables setup ///////////
