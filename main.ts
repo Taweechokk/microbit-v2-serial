@@ -206,9 +206,9 @@ function encode_led_matrix(hex: number) {
     }
     return 1
 }
-/////////////////////////////////////////////
+////////////// end built-in on board ////////////
 
-//////////////////// sensor kit ////////////////
+//////////////////// iot kit ////////////////
 let oledInited = false   // <-- flag
 
 function add_text(text: string | number) {
