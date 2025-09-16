@@ -1,28 +1,7 @@
 function ping(): string {
     return "mb2_serial:77"
 }
-//////////////////// KEYSTUDIO KEY ////////////////
-// Infrared Obstacle Avoidance
-function read_infrared_obstacle_avoidance(sensorPin: number): number {
-    return pins.digitalReadPin(sensorPin)
-}
 
-// Photo Interrupter
-function read_photo_interrupter(buttonpin: number): number {
-    return pins.digitalReadPin(buttonpin)
-}
-
-function read_ir_temp(): number {
-    return MLX90614.temperature(MLX90614_TEMPERATURE_ORIGIN.OBJECT)
-}
- 
-// RGB LED
-function control_rgb_led(redPin: number, greenPin: number, bluePin: number, r: number, g: number, b: number): number {
-    pins.analogWritePin(redPin, Math.map(r, 0, 255, 0, 1023));
-    pins.analogWritePin(greenPin, Math.map(g, 0, 255, 0, 1023));
-    pins.analogWritePin(bluePin, Math.map(b, 0, 255, 0, 1023));
-    return 1
-}
 
 // lm35 temperature
 function read_lm35_temp(tempPin: number) : number {
